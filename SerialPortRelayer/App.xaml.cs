@@ -6,10 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace SerialPortRelayer {
+namespace Poseidon {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
     }
 }
+
+
+

@@ -10,6 +10,10 @@ namespace SerialPortRelayer.Views {
     public class MainWindowVM : BindableBase {
 
         private Controller _controller;
+        public Controller Controller {
+            get { return _controller; }
+            set { SetNotify(ref _controller, value); }
+        }
 
         public MainWindowVM(Controller controller, MainWindow mainWindow) {
             _controller = controller;

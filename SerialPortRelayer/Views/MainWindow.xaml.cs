@@ -21,12 +21,16 @@ namespace SerialPortRelayer.Views {
     /// </summary>
     public partial class MainWindow : Window {
 
-        private MainWindowVM _mainWindowVM;
-
         public MainWindow() {
             var controller = new Controller();
-            _mainWindowVM = new MainWindowVM(controller, this);
-            DataContext = _mainWindowVM;
+
+            var mainWindowVM = new MainWindowVM(controller, this);
+            controller.MainWindowVM = mainWindowVM;
+
+            var serialPortHandler = new SerialPortHandler(controller);
+            controller.SerialPortHandler = serialPortHandler;
+
+            DataContext = mainWindowVM;
 
             InitializeComponent();
         }

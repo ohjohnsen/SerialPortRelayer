@@ -3,10 +3,47 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SerialPortRelayer"
+        xmlns:local="clr-namespace:SerialPortRelayer.Views"
+        d:DataContext="{d:DesignInstance local:MainWindowVM}"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Column="0" Grid.Row="0" Text="Relayer A Serial Port:" />
+            <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Path=Controller.SerialPortHandler.SerialPortList}"
+                      SelectedItem="{Binding Path=Controller.SerialPortHandler.SelectedRelayerPortAName, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Column="0" Grid.Row="1" Text="Relayer B Serial Port:" />
+            <ComboBox Grid.Column="1" Grid.Row="1" ItemsSource="{Binding Path=Controller.SerialPortHandler.SerialPortList}"
+                      SelectedItem="{Binding Path=Controller.SerialPortHandler.SelectedRelayerPortBName, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Column="0" Grid.Row="2" Text="Sniffer A->B Serial Port:" />
+            <ComboBox Grid.Column="1" Grid.Row="2" ItemsSource="{Binding Path=Controller.SerialPortHandler.SerialPortList}"
+                      SelectedItem="{Binding Path=Controller.SerialPortHandler.SelectedSnifferPortABName, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Column="0" Grid.Row="3" Text="Sniffer B->A Serial Port:" />
+            <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding Path=Controller.SerialPortHandler.SerialPortList}"
+                      SelectedItem="{Binding Path=Controller.SerialPortHandler.SelectedSnifferPortBAName, Mode=TwoWay}"/>
+
+            <TextBlock Grid.Column="0" Grid.Row="4" Text="Baud Rate:" />
+            <ComboBox Grid.Column="1" Grid.Row="4" ItemsSource="{Binding Path=Controller.SerialPortHandler.BaudRateList}"
+                      SelectedItem="{Binding Path=Controller.SerialPortHandler.SelectedBaudRate, Mode=TwoWay}"/>
+        </Grid>
     </Grid>
 </Window>

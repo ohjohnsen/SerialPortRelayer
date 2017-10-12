@@ -14,5 +14,7 @@ namespace SerialPortRelayer.Services {
         }
 
         public MainWindowVM MainWindowVM { get; set; }
+
+        public SerialPortHandler SerialPortHandler { get; set; }
     }
 }
