@@ -1,4 +1,5 @@
-﻿using RJCP.IO.Ports;
+﻿using NLog;
+using RJCP.IO.Ports;
 using SerialPortRelayer.Utilities;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,12 @@ namespace SerialPortRelayer.Services {
     public class SerialPortHandler : BindableBase {
 
         private Controller _controller;
+        private SerialPortStream _relayerPortA;
+        private SerialPortStream _relayerPortB;
+        private SerialPortStream _snifferPortAB;
+        private SerialPortStream _snifferPortBA;
+
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public SerialPortHandler(Controller controller) {
             _controller = controller;
@@ -38,32 +45,6 @@ namespace SerialPortRelayer.Services {
             _snifferPortBA.StopBits = StopBits.One;
             _snifferPortBA.Parity = Parity.None;
             _snifferPortBA.Handshake = Handshake.None;
-
-            SelectedBaudRate = 38400;
-        }
-
-        private SerialPortStream _relayerPortA;
-        public SerialPortStream RelayerPortA {
-            get { return _relayerPortA; }
-            set { SetNotify(ref _relayerPortA, value); }
-        }
-
-        private SerialPortStream _relayerPortB;
-        public SerialPortStream RelayerPortB {
-            get { return _relayerPortB; }
-            set { SetNotify(ref _relayerPortB, value); }
-        }
-
-        private SerialPortStream _snifferPortAB;
-        public SerialPortStream SnifferPortAB {
-            get { return _snifferPortAB; }
-            set { SetNotify(ref _snifferPortAB, value); }
-        }
-
-        private SerialPortStream _snifferPortBA;
-        public SerialPortStream SnifferPortBA {
-            get { return _snifferPortBA; }
-            set { SetNotify(ref _snifferPortBA, value); }
         }
 
         public ObservableCollection<string> SerialPortList {
@@ -75,7 +56,9 @@ namespace SerialPortRelayer.Services {
             get { return _selectedRelayerPortAName; }
             set {
                 SetNotify(ref _selectedRelayerPortAName, value);
-                RelayerPortA.PortName = SelectedRelayerPortAName;
+                _relayerPortA.PortName = SelectedRelayerPortAName;
+                _logger.Info("Relayer Port A set to {0}", SelectedRelayerPortAName);
+                XmlSerializer.SaveToFile(_controller);
             }
         }
 
@@ -84,7 +67,9 @@ namespace SerialPortRelayer.Services {
             get { return _selectedRelayerPortBName; }
             set {
                 SetNotify(ref _selectedRelayerPortBName, value);
-                RelayerPortB.PortName = SelectedRelayerPortBName;
+                _relayerPortB.PortName = SelectedRelayerPortBName;
+                _logger.Info("Relayer Port B set to {0}", SelectedRelayerPortBName);
+                XmlSerializer.SaveToFile(_controller);
             }
         }
 
@@ -93,7 +78,9 @@ namespace SerialPortRelayer.Services {
             get { return _selectedSnifferPortABName; }
             set {
                 SetNotify(ref _selectedSnifferPortABName, value);
-                SnifferPortAB.PortName = SelectedSnifferPortABName;
+                _snifferPortAB.PortName = SelectedSnifferPortABName;
+                _logger.Info("Sniffer Port A->B set to {0}", SelectedSnifferPortABName);
+                XmlSerializer.SaveToFile(_controller);
             }
         }
 
@@ -102,7 +89,9 @@ namespace SerialPortRelayer.Services {
             get { return _selectedSnifferPortBAName; }
             set {
                 SetNotify(ref _selectedSnifferPortBAName, value);
-                SnifferPortBA.PortName = SelectedSnifferPortBAName;
+                _snifferPortBA.PortName = SelectedSnifferPortBAName;
+                _logger.Info("Sniffer Port B->A set to {0}", SelectedSnifferPortBAName);
+                XmlSerializer.SaveToFile(_controller);
             }
         }
 
@@ -115,10 +104,11 @@ namespace SerialPortRelayer.Services {
             get { return _selectedBaudRate; }
             set {
                 SetNotify(ref _selectedBaudRate, value);
-                RelayerPortA.BaudRate = SelectedBaudRate;
-                RelayerPortB.BaudRate = SelectedBaudRate;
-                SnifferPortAB.BaudRate = SelectedBaudRate;
-                SnifferPortBA.BaudRate = SelectedBaudRate;
+                _relayerPortA.BaudRate = SelectedBaudRate;
+                _relayerPortB.BaudRate = SelectedBaudRate;
+                _snifferPortAB.BaudRate = SelectedBaudRate;
+                _snifferPortBA.BaudRate = SelectedBaudRate;
+                XmlSerializer.SaveToFile(_controller);
             }
         }
 
