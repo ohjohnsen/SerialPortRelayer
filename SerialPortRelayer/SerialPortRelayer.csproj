@@ -69,6 +69,7 @@
     <Compile Include="Services\XmlSerializer.cs" />
     <Compile Include="Services\XmlTemplate.cs" />
     <Compile Include="Utilities\BindableBase.cs" />
+    <Compile Include="Utilities\CustomCommand.cs" />
     <Compile Include="Views\MainWindowVM.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

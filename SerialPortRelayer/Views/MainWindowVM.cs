@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace SerialPortRelayer.Views {
     public class MainWindowVM : BindableBase {
@@ -28,8 +29,12 @@ namespace SerialPortRelayer.Views {
             set { SetNotify(ref _mainWindow, value); }
         }
 
-        private void LoadCommands() {
+        public ICommand OpenSerialPortsCommand { get; set; }
+        public ICommand CloseSerialPortsCommand { get; set; }
 
+        private void LoadCommands() {
+            OpenSerialPortsCommand = new CustomCommand(_controller.SerialPortHandler.OpenSerialPorts, _controller.SerialPortHandler.CanOpenSerialPorts);
+            CloseSerialPortsCommand = new CustomCommand(_controller.SerialPortHandler.CloseSerialPorts, _controller.SerialPortHandler.CanCloseSerialPorts);
         }
     }
 }

@@ -27,12 +27,14 @@ namespace SerialPortRelayer.Services {
             _relayerPortA.StopBits = StopBits.One;
             _relayerPortA.Parity = Parity.None;
             _relayerPortA.Handshake = Handshake.None;
+            _relayerPortA.DataReceived += _relayerPortA_DataReceived;
 
             _relayerPortB = new SerialPortStream();
             _relayerPortB.DataBits = 8;
             _relayerPortB.StopBits = StopBits.One;
             _relayerPortB.Parity = Parity.None;
             _relayerPortB.Handshake = Handshake.None;
+            _relayerPortB.DataReceived += _relayerPortB_DataReceived;
 
             _snifferPortAB = new SerialPortStream();
             _snifferPortAB.DataBits = 8;
@@ -45,6 +47,18 @@ namespace SerialPortRelayer.Services {
             _snifferPortBA.StopBits = StopBits.One;
             _snifferPortBA.Parity = Parity.None;
             _snifferPortBA.Handshake = Handshake.None;
+        }
+
+        private uint _snifferPortABByteCount;
+        public uint SnifferPortABByteCount {
+            get { return _snifferPortABByteCount; }
+            set { SetNotify(ref _snifferPortABByteCount, value); }
+        }
+
+        private uint _snifferPortBAByteCount;
+        public uint SnifferPortBAByteCount {
+            get { return _snifferPortBAByteCount; }
+            set { SetNotify(ref _snifferPortBAByteCount, value); }
         }
 
         public ObservableCollection<string> SerialPortList {
@@ -112,6 +126,30 @@ namespace SerialPortRelayer.Services {
             }
         }
 
+        private bool _isOpen;
+        public bool IsOpen {
+            get { return _isOpen; }
+            set { SetNotify(ref _isOpen, value); }
+        }
+
+        private void _relayerPortA_DataReceived(object sender, SerialDataReceivedEventArgs e) {
+            SerialPortStream sp = (SerialPortStream)sender;
+            var bytes = new byte[sp.BytesToRead];
+            sp.Read(bytes, 0, bytes.Length);
+            _relayerPortB.WriteAsync(bytes, 0, bytes.Length);
+            _snifferPortAB.WriteAsync(bytes, 0, bytes.Length);
+            SnifferPortABByteCount += (uint)bytes.Length;
+        }
+
+        private void _relayerPortB_DataReceived(object sender, SerialDataReceivedEventArgs e) {
+            SerialPortStream sp = (SerialPortStream)sender;
+            var bytes = new byte[sp.BytesToRead];
+            sp.Read(bytes, 0, bytes.Length);
+            _relayerPortA.WriteAsync(bytes, 0, bytes.Length);
+            _snifferPortBA.WriteAsync(bytes, 0, bytes.Length);
+            SnifferPortBAByteCount += (uint)bytes.Length;
+        }
+
         public ObservableCollection<string> GetSerialPortList() {
             var serialPortList = new ObservableCollection<string>();
             string[] serialPortArray = SerialPortStream.GetPortNames();
@@ -122,6 +160,50 @@ namespace SerialPortRelayer.Services {
                 serialPortList.Add(s);
             }
             return serialPortList;
+        }
+
+        internal void OpenSerialPorts(object obj) {
+            try {
+                _relayerPortA.Open();
+                _relayerPortB.Open();
+                _snifferPortAB.Open();
+                _snifferPortBA.Open();
+                IsOpen = true;
+                _logger.Info("Connected to serial ports");
+            }
+            catch (Exception ex) {
+                _relayerPortA.Close();
+                _relayerPortB.Close();
+                _snifferPortAB.Close();
+                _snifferPortBA.Close();
+                IsOpen = false;
+                _logger.Error("Unable to connect to serial ports: \"{0}\"", ex.Message);
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+        }
+
+        internal bool CanOpenSerialPorts(object obj) {
+            return !IsOpen;
+        }
+
+        internal void CloseSerialPorts(object obj) {
+            try {
+                _relayerPortA.Close();
+                _relayerPortB.Close();
+                _snifferPortAB.Close();
+                _snifferPortBA.Close();
+                IsOpen = false;
+                _logger.Info("Disconnected from serial ports");
+            }
+            catch (Exception ex) {
+                IsOpen = false;
+                _logger.Error("Error when disconnecting from serial ports: \"{0}\"", ex.Message);
+                System.Windows.MessageBox.Show(ex.Message);
+            }
+        }
+
+        internal bool CanCloseSerialPorts(object obj) {
+            return IsOpen;
         }
     }
 }

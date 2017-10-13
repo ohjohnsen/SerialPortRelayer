@@ -27,11 +27,11 @@ namespace SerialPortRelayer.Views {
         public MainWindow() {
             var controller = new Controller();
 
-            var mainWindowVM = new MainWindowVM(controller, this);
-            controller.MainWindowVM = mainWindowVM;
-
             var serialPortHandler = new SerialPortHandler(controller);
             controller.SerialPortHandler = serialPortHandler;
+
+            var mainWindowVM = new MainWindowVM(controller, this);
+            controller.MainWindowVM = mainWindowVM;
 
             DataContext = mainWindowVM;
 
