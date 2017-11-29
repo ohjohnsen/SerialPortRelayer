@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SerialPortRelayer.Views"
         d:DataContext="{d:DesignInstance local:MainWindowVM}"
         mc:Ignorable="d"
-        Title="Serial Port Relayer" Height="250" Width="350" ResizeMode="CanMinimize"
+        Title="{Binding Path=WindowTitle}" Height="250" Width="350" ResizeMode="CanMinimize"
         Loaded="Window_Loaded" Closing="Window_Closing">
     
     <Grid Margin="10">
